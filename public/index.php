@@ -1,8 +1,6 @@
 <?php
 
 use DI\Container;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -43,7 +41,9 @@ $app->add(function ($request, $handler) {
 $app->get('/posts', function ($request, $response, $args) {
     $pdo = $this->get('db');
 
-    $stmt  = $pdo->query('SELECT * FROM posts');
+    $stmt  = $pdo->query('SELECT posts.id, posts.title, posts.body, users.username 
+        FROM posts 
+        JOIN users ON posts.user_id = users.id');
     $users = $stmt->fetchAll();
 
     $response->getBody()->write(json_encode($users, JSON_THROW_ON_ERROR));
@@ -51,5 +51,19 @@ $app->get('/posts', function ($request, $response, $args) {
     return $response->withHeader('Content-Type', 'application/json');
 });
 
+$app->delete('/posts/{id}', function ($request, $response, $args) {
+    $id = $args['id'];
+
+    $db = $this->get('db');
+
+    $stmt = $db->prepare('DELETE FROM posts WHERE id = :id');
+    $stmt->bindParam(':id', $id);
+
+    if ($stmt->execute()) {
+        return $response->withStatus(204);
+    }
+
+    return $response->withStatus(500);
+});
 
 $app->run();
