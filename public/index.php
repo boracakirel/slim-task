@@ -14,7 +14,7 @@ $app = AppFactory::create();
 
 $container->set('db', function () {
     $settings = [
-        'host'     => '127.0.0.1',
+        'host'     => 'localhost',
         'dbname'   => 'slim-task',
         'username' => 'root',
         'password' => 'root',
