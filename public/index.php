@@ -31,15 +31,14 @@ $container->set('db', function () {
     return $pdo;
 });
 
-$app->get('/', function (
-    Request $request,
-    Response $response,
-    $args
-) {
-    $response->getBody()->write('Hello world!');
-
-    return $response;
+$app->add(function ($request, $handler) {
+    $response = $handler->handle($request);
+    return $response
+        ->withHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
+        ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+        ->withHeader('Access-Control-Allow-Methods', 'GET, DELETE');
 });
+
 
 $app->get('/posts', function ($request, $response, $args) {
     $pdo = $this->get('db');
