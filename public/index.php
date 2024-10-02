@@ -29,12 +29,16 @@ $container->set('db', function () {
     return $pdo;
 });
 
-$app->add(function ($request, $handler) {
-    $response = $handler->handle($request);
+$app->add(function ($request, $handler) use ($app) {
+    if ($request->getMethod() === 'OPTIONS') {
+        $response = $app->getResponseFactory()->createResponse();
+    } else {
+        $response = $handler->handle($request);
+    }
     return $response
         ->withHeader('Access-Control-Allow-Origin', 'http://localhost:3000')
         ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
-        ->withHeader('Access-Control-Allow-Methods', 'GET, DELETE');
+        ->withHeader('Access-Control-Allow-Methods', 'GET, DELETE, OPTIONS');
 });
 
 
