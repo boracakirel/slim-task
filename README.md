@@ -1,3 +1,5 @@
+## SLIM TASK
+
 ![App Image](app-image.png)
 # SETTING UP LOCAL ENVIRONMENT
 
